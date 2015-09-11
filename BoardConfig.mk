@@ -30,6 +30,9 @@ BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := device/samsung/lt013g/bluetooth
 TARGET_KERNEL_SOURCE := kernel/samsung/smdk4x12
 TARGET_KERNEL_CONFIG := cyanogenmod_lt013g_defconfig
 
+# Properties
+TARGET_SYSTEM_PROP += device/samsung/lt013g/system.prop
+
 # assert
 TARGET_OTA_ASSERT_DEVICE := lt013g,lt013gxx,SM-T311
 
