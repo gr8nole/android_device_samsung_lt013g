@@ -215,7 +215,7 @@ We are able to have most of our routing static so do that
         <ctl name="AIF2DAC Volume" val="96"/>
     </path>
 </device>
-<device name="analog-dock">
+<device name="analogue-dock">
     <path name="on">
         <ctl name="LINEOUT2N Switch" val="1"/>
         <ctl name="LINEOUT2P Switch" val="1"/>
