@@ -40,6 +40,9 @@ PRODUCT_PACKAGES += \
     SamsungServiceMode
 
 # RIL
+PRODUCT_PACKAGES += \
+	ril-wrapper
+
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.telephony.ril_class=SamsungExynos4RIL \
     mobiledata.interfaces=rmnet0,rmnet1,pdp0,wlan0,gprs,ppp0 \

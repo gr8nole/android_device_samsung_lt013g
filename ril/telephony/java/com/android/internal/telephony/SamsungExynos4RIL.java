@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The CyanogenMod Project <http://www.cyanogenmod.org>
+ * Copyright (C) 2014 The OmniROM Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,26 +22,105 @@ import static com.android.internal.telephony.RILConstants.*;
 import android.content.Context;
 import android.os.AsyncResult;
 import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.Registrant;
-import android.text.TextUtils;
+import android.telephony.ModemActivityInfo;
 import android.telephony.Rlog;
 
 import android.telephony.PhoneNumberUtils;
 
-import java.util.ArrayList;
-
 public class SamsungExynos4RIL extends RIL implements CommandsInterface {
 
+    //SAMSUNG STATES
+    static final int RIL_REQUEST_GET_CELL_BROADCAST_CONFIG = 10002;
+
+    static final int RIL_REQUEST_SEND_ENCODED_USSD = 10005;
+    static final int RIL_REQUEST_SET_PDA_MEMORY_STATUS = 10006;
+    static final int RIL_REQUEST_GET_PHONEBOOK_STORAGE_INFO = 10007;
+    static final int RIL_REQUEST_GET_PHONEBOOK_ENTRY = 10008;
+    static final int RIL_REQUEST_ACCESS_PHONEBOOK_ENTRY = 10009;
+    static final int RIL_REQUEST_DIAL_VIDEO_CALL = 10010;
+    static final int RIL_REQUEST_CALL_DEFLECTION = 10011;
+    static final int RIL_REQUEST_READ_SMS_FROM_SIM = 10012;
+    static final int RIL_REQUEST_USIM_PB_CAPA = 10013;
+    static final int RIL_REQUEST_LOCK_INFO = 10014;
+
     static final int RIL_REQUEST_DIAL_EMERGENCY = 10016;
+    static final int RIL_REQUEST_GET_STOREAD_MSG_COUNT = 10017;
+    static final int RIL_REQUEST_STK_SIM_INIT_EVENT = 10018;
+    static final int RIL_REQUEST_GET_LINE_ID = 10019;
+    static final int RIL_REQUEST_SET_LINE_ID = 10020;
+    static final int RIL_REQUEST_GET_SERIAL_NUMBER = 10021;
+    static final int RIL_REQUEST_GET_MANUFACTURE_DATE_NUMBER = 10022;
+    static final int RIL_REQUEST_GET_BARCODE_NUMBER = 10023;
+    static final int RIL_REQUEST_UICC_GBA_AUTHENTICATE_BOOTSTRAP = 10024;
+    static final int RIL_REQUEST_UICC_GBA_AUTHENTICATE_NAF = 10025;
+    static final int RIL_REQUEST_SIM_TRANSMIT_BASIC = 10026;
+    static final int RIL_REQUEST_SIM_OPEN_CHANNEL = 10027;
+    static final int RIL_REQUEST_SIM_CLOSE_CHANNEL = 10028;
+    static final int RIL_REQUEST_SIM_TRANSMIT_CHANNEL = 10029;
+    static final int RIL_REQUEST_SIM_AUTH = 10030;
+    static final int RIL_REQUEST_PS_ATTACH = 10031;
+    static final int RIL_REQUEST_PS_DETACH = 10032;
+    static final int RIL_REQUEST_ACTIVATE_DATA_CALL = 10033;
+    static final int RIL_REQUEST_CHANGE_SIM_PERSO = 10034;
+    static final int RIL_REQUEST_ENTER_SIM_PERSO = 10035;
+    static final int RIL_REQUEST_GET_TIME_INFO = 10036;
+    static final int RIL_REQUEST_OMADM_SETUP_SESSION = 10037;
+    static final int RIL_REQUEST_OMADM_SERVER_START_SESSION = 10038;
+    static final int RIL_REQUEST_OMADM_CLIENT_START_SESSION = 10039;
+    static final int RIL_REQUEST_OMADM_SEND_DATA = 10040;
+    static final int RIL_REQUEST_CDMA_GET_DATAPROFILE = 10041;
+    static final int RIL_REQUEST_CDMA_SET_DATAPROFILE = 10042;
+    static final int RIL_REQUEST_CDMA_GET_SYSTEMPROPERTIES = 10043;
+    static final int RIL_REQUEST_CDMA_SET_SYSTEMPROPERTIES = 10044;
+    static final int RIL_REQUEST_SEND_SMS_COUNT = 10045;
+    static final int RIL_REQUEST_SEND_SMS_MSG = 10046;
+    static final int RIL_REQUEST_SEND_SMS_MSG_READ_STATUS = 10047;
+    static final int RIL_REQUEST_MODEM_HANGUP = 10048;
+    static final int RIL_REQUEST_SET_SIM_POWER = 10049;
+    static final int RIL_REQUEST_SET_PREFERRED_NETWORK_LIST = 10050;
+    static final int RIL_REQUEST_GET_PREFERRED_NETWORK_LIST = 10051;
+    static final int RIL_REQUEST_HANGUP_VT = 10052;
+
+    static final int RIL_UNSOL_RELEASE_COMPLETE_MESSAGE = 11001;
+    static final int RIL_UNSOL_STK_SEND_SMS_RESULT = 11002;
+    static final int RIL_UNSOL_STK_CALL_CONTROL_RESULT = 11003;
+    static final int RIL_UNSOL_DUN_CALL_STATUS = 11004;
+
+    static final int RIL_UNSOL_O2_HOME_ZONE_INFO = 11007;
+    static final int RIL_UNSOL_DEVICE_READY_NOTI = 11008;
+    static final int RIL_UNSOL_GPS_NOTI = 11009;
+    static final int RIL_UNSOL_AM = 11010;
+    static final int RIL_UNSOL_DUN_PIN_CONTROL_SIGNAL = 11011;
+    static final int RIL_UNSOL_DATA_SUSPEND_RESUME = 11012;
+    static final int RIL_UNSOL_SAP = 11013;
+
+    static final int RIL_UNSOL_SIM_SMS_STORAGE_AVAILALE = 11015;
+    static final int RIL_UNSOL_HSDPA_STATE_CHANGED = 11016;
+    static final int RIL_UNSOL_WB_AMR_STATE = 11017;
+    static final int RIL_UNSOL_TWO_MIC_STATE = 11018;
+    static final int RIL_UNSOL_DHA_STATE = 11019;
+    static final int RIL_UNSOL_UART = 11020;
+    static final int RIL_UNSOL_RESPONSE_HANDOVER = 11021;
+    static final int RIL_UNSOL_IPV6_ADDR = 11022;
+    static final int RIL_UNSOL_NWK_INIT_DISC_REQUEST = 11023;
+    static final int RIL_UNSOL_RTS_INDICATION = 11024;
+    static final int RIL_UNSOL_OMADM_SEND_DATA = 11025;
+    static final int RIL_UNSOL_DUN = 11026;
+    static final int RIL_UNSOL_SYSTEM_REBOOT = 11027;
+    static final int RIL_UNSOL_VOICE_PRIVACY_CHANGED = 11028;
+    static final int RIL_UNSOL_UTS_GETSMSCOUNT = 11029;
+    static final int RIL_UNSOL_UTS_GETSMSMSG = 11030;
+    static final int RIL_UNSOL_UTS_GET_UNREAD_SMS_STATUS = 11031;
+    static final int RIL_UNSOL_MIP_CONNECT_STATUS = 11032;
 
     private Object mCatProCmdBuffer;
+    /* private Message mPendingGetSimStatus; */
 
-    public SamsungExynos4RIL(Context context, int networkMode, int cdmaSubscription, Integer instanceid) {
-        super(context, networkMode, cdmaSubscription, instanceid);
+    public SamsungExynos4RIL(Context context, int networkMode, int cdmaSubscription, Integer instanceId) {
+        super(context, networkMode, cdmaSubscription, instanceId);
     }
 
     static String
@@ -106,7 +186,7 @@ public class SamsungExynos4RIL extends RIL implements CommandsInterface {
             case RIL_REQUEST_SWITCH_WAITING_OR_HOLDING_AND_ACTIVE: ret =  responseVoid(p); break;
             case RIL_REQUEST_CONFERENCE: ret =  responseVoid(p); break;
             case RIL_REQUEST_UDUB: ret =  responseVoid(p); break;
-            case RIL_REQUEST_LAST_CALL_FAIL_CAUSE: ret =  responseInts(p); break;
+            case RIL_REQUEST_LAST_CALL_FAIL_CAUSE: ret =  responseFailCause(p); break;
             case RIL_REQUEST_SIGNAL_STRENGTH: ret =  responseSignalStrength(p); break;
             case RIL_REQUEST_VOICE_REGISTRATION_STATE: ret =  responseStrings(p); break;
             case RIL_REQUEST_DATA_REGISTRATION_STATE: ret =  responseStrings(p); break;
@@ -217,6 +297,12 @@ public class SamsungExynos4RIL extends RIL implements CommandsInterface {
             case RIL_REQUEST_GET_HARDWARE_CONFIG: ret = responseHardwareConfig(p); break;
             case RIL_REQUEST_SIM_AUTHENTICATION: ret =  responseICC_IOBase64(p); break;
             case RIL_REQUEST_SHUTDOWN: ret = responseVoid(p); break;
+            case RIL_REQUEST_GET_RADIO_CAPABILITY: ret =  responseRadioCapability(p); break;
+            case RIL_REQUEST_SET_RADIO_CAPABILITY: ret =  responseRadioCapability(p); break;
+            case RIL_REQUEST_START_LCE: ret = responseLceStatus(p); break;
+            case RIL_REQUEST_STOP_LCE: ret = responseLceStatus(p); break;
+            case RIL_REQUEST_PULL_LCEDATA: ret = responseLceData(p); break;
+            case RIL_REQUEST_GET_ACTIVITY_INFO: ret = responseActivityData(p); break;
             default:
                 throw new RuntimeException("Unrecognized solicited response: " + rr.mRequest);
             //break;
@@ -233,6 +319,14 @@ public class SamsungExynos4RIL extends RIL implements CommandsInterface {
                 }
                 return rr;
             }
+        }
+
+        if (rr.mRequest == RIL_REQUEST_SHUTDOWN) {
+            // Set RADIO_STATE to RADIO_UNAVAILABLE to continue shutdown process
+            // regardless of error code to continue shutdown procedure.
+            riljLog("Response to RIL_REQUEST_SHUTDOWN received. Error is " +
+                    error + " Setting Radio State to Unavailable regardless of error.");
+            setRadioState(RadioState.RADIO_UNAVAILABLE);
         }
 
         // Here and below fake RIL_UNSOL_RESPONSE_SIM_STATUS_CHANGED, see b/7255789.
@@ -266,18 +360,36 @@ public class SamsungExynos4RIL extends RIL implements CommandsInterface {
                         mIccStatusChangedRegistrants.notifyRegistrants();
                     }
                     break;
+                case RIL_REQUEST_GET_RADIO_CAPABILITY: {
+                    // Ideally RIL's would support this or at least give NOT_SUPPORTED
+                    // but the hammerhead RIL reports GENERIC :(
+                    // TODO - remove GENERIC_FAILURE catching: b/21079604
+                    if (REQUEST_NOT_SUPPORTED == error ||
+                            GENERIC_FAILURE == error) {
+                        // we should construct the RAF bitmask the radio
+                        // supports based on preferred network bitmasks
+                        ret = makeStaticRadioCapability();
+                        error = 0;
+                    }
+                    break;
+                }
+                case RIL_REQUEST_GET_ACTIVITY_INFO:
+                    ret = new ModemActivityInfo(0, 0, 0,
+                            new int [ModemActivityInfo.TX_POWER_LEVELS], 0, 0);
+                    error = 0;
+                    break;
             }
 
-            rr.onError(error, ret);
-            return rr;
-        }
+           if (error != 0) rr.onError(error, ret);
+        } 
+        if (error == 0) {
+            if (RILJ_LOGD) riljLog(rr.serialString() + "< " + requestToString(rr.mRequest)
+                    + " " + retToString(rr.mRequest, ret));
 
-        if (RILJ_LOGD) riljLog(rr.serialString() + "< " + requestToString(rr.mRequest)
-            + " " + retToString(rr.mRequest, ret));
-
-        if (rr.mResult != null) {
-            AsyncResult.forMessage(rr.mResult, ret, null);
-            rr.mResult.sendToTarget();
+            if (rr.mResult != null) {
+                AsyncResult.forMessage(rr.mResult, ret, null);
+                rr.mResult.sendToTarget();
+            }
         }
 
         return rr;
@@ -286,13 +398,12 @@ public class SamsungExynos4RIL extends RIL implements CommandsInterface {
     @Override
     public void
     dial(String address, int clirMode, UUSInfo uusInfo, Message result) {
-        RILRequest rr;
         if (PhoneNumberUtils.isEmergencyNumber(address)) {
             dialEmergencyCall(address, clirMode, result);
             return;
         }
 
-        rr = RILRequest.obtain(RIL_REQUEST_DIAL, result);
+        RILRequest rr = RILRequest.obtain(RIL_REQUEST_DIAL, result);
         rr.mParcel.writeString(address);
         rr.mParcel.writeInt(clirMode);
 
@@ -312,10 +423,9 @@ public class SamsungExynos4RIL extends RIL implements CommandsInterface {
 
     public void
     dialEmergencyCall(String address, int clirMode, Message result) {
-        RILRequest rr;
         Rlog.v(RILJ_LOG_TAG, "Emergency dial: " + address);
 
-        rr = RILRequest.obtain(RIL_REQUEST_DIAL_EMERGENCY, result);
+        RILRequest rr = RILRequest.obtain(RIL_REQUEST_DIAL_EMERGENCY, result);
         rr.mParcel.writeString(address + "/");
         rr.mParcel.writeInt(clirMode);
         rr.mParcel.writeInt(0);  // UUS information is absent
@@ -355,6 +465,7 @@ public class SamsungExynos4RIL extends RIL implements CommandsInterface {
                 super.processUnsolicited(p);
                 return;
         }
+
     }
 
     @Override
@@ -366,4 +477,29 @@ public class SamsungExynos4RIL extends RIL implements CommandsInterface {
             mCatProCmdBuffer = null;
         }
     }
+
+    private void
+    constructGsmSendSmsRilRequest (RILRequest rr, String smscPDU, String pdu) {
+        rr.mParcel.writeInt(2);
+        rr.mParcel.writeString(smscPDU);
+        rr.mParcel.writeString(pdu);
+    }
+
+    /**
+     * The RIL can't handle the RIL_REQUEST_SEND_SMS_EXPECT_MORE
+     * request properly, so we use RIL_REQUEST_SEND_SMS instead.
+     */
+    @Override
+    public void
+    sendSMSExpectMore (String smscPDU, String pdu, Message result) {
+        RILRequest rr
+                = RILRequest.obtain(RIL_REQUEST_SEND_SMS, result);
+
+        constructGsmSendSmsRilRequest(rr, smscPDU, pdu);
+
+        if (RILJ_LOGD) riljLog(rr.serialString() + "> " + requestToString(rr.mRequest));
+
+        send(rr);
+    }
+
 }
