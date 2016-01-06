@@ -10,7 +10,7 @@
        FactoryTestFilePath="/data/"
 
        Log="JAVA"
-       LogDirectory="/storage/sdcard0/gps/broadcom/storage"
+       LogDirectory="/sdcard/gps/broadcom/storage"
 
        LPmode="false"
        CpColdStart="false"
