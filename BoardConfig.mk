@@ -18,7 +18,6 @@
 # by BoardConfigVendor.mk
 -include device/samsung/lt01-common/BoardCommonConfig.mk
 
-TARGET_SPECIFIC_HEADER_PATH := device/samsung/lt013g/include
 
 # RIL
 BOARD_PROVIDES_LIBRIL := true
