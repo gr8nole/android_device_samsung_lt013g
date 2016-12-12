@@ -1,5 +1,5 @@
 on init
-    export LD_SHIM_LIBS /system/lib/libsec-ril.so|libsamsung_symbols.so
+    export LD_SHIM_LIBS /system/lib/libsec-ril.so|libsamsung_symbols.so:/system/vendor/lib/libwvm.so|libshim_wvm.so
 
 on fs
     # IPC sysfs
@@ -38,6 +38,7 @@ service cpboot-daemon /sbin/cbd -d -p 13
     class main
     user root
     group radio cache inet misc audio sdcard_rw log sdcard_r
+    seclabel u:r:cpboot-daemon:s0
 
 # GPS
 service gpsd /system/bin/gpsd -c /system/etc/gps.xml
