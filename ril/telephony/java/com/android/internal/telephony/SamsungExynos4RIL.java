@@ -553,4 +553,3 @@ public class SamsungExynos4RIL extends RIL implements CommandsInterface {
     }
 
 }
-

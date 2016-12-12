@@ -134,4 +134,3 @@ out_fail:
 	dlclose(realRilLibHandle);
 	return NULL;
 }
-
