@@ -26,7 +26,7 @@ BOARD_RIL_CLASS := ../../../device/samsung/lt013g/ril
 
 # Kernel
 TARGET_KERNEL_SOURCE := kernel/samsung/smdk4x12
-TARGET_KERNEL_CONFIG := cyanogenmod_lt013g_defconfig
+TARGET_KERNEL_CONFIG := lineage_lt013g_defconfig
 
 # Properties
 TARGET_SYSTEM_PROP += device/samsung/lt013g/system.prop
