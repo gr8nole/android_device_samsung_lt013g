@@ -34,7 +34,7 @@ service at_distributor /system/bin/at_distributor
 on property:init.svc.ril-daemon=restarting
     restart cpboot-daemon
 
-service cpboot-daemon /sbin/cbd -d -p 13
+service cpboot-daemon /system/bin/cbd -d -p 13
     class main
     user root
     group radio cache inet misc audio sdcard_rw log sdcard_r
