@@ -39,10 +39,6 @@ PRODUCT_PACKAGES += \
     Stk \
     SamsungServiceMode
 
-# RIL
-PRODUCT_PACKAGES += \
-	libsecril-shim
-
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.telephony.ril_class=SamsungExynos4RIL \
     mobiledata.interfaces=rmnet0,rmnet1,pdp0,wlan0,gprs,ppp0 \
