@@ -50,5 +50,3 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml
 
 $(call inherit-product-if-exists, vendor/samsung/lt013g/lt013g-vendor.mk)
-
-$(call inherit-product, device/samsung/lt01-common/common.mk)
